@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b1020">
+<title>Robotejsn</title>
+<style>
+:root{color-scheme:dark;--bg:#090e1b;--panel:#111a2c;--panel2:#17233a;--line:#263550;--text:#f4f7ff;--muted:#9aa9c2;--blue:#5b9cff;--blue2:#3478ed}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#14213b 0,#090e1b 55%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh;padding:calc(18px + env(safe-area-inset-top)) 16px calc(28px + env(safe-area-inset-bottom))}
+.app{max-width:520px;margin:auto}.top{display:flex;align-items:center;justify-content:space-between;margin:6px 2px 22px}.brand{font-weight:800;font-size:25px;letter-spacing:-.7px}.brand span{color:var(--blue)}.weeklabel{color:var(--muted);font-size:13px;margin-top:5px}.pill{border:1px solid var(--line);background:#111a2c;color:#cbd8ef;border-radius:999px;padding:8px 11px;font-size:12px}
+.card{background:linear-gradient(145deg,rgba(21,32,53,.98),rgba(15,24,41,.98));border:1px solid var(--line);border-radius:22px;padding:18px;margin-bottom:14px;box-shadow:0 12px 35px #0003}
+.eyebrow{font-size:12px;color:var(--muted);letter-spacing:.5px;text-transform:uppercase}.total{font-size:42px;font-weight:800;letter-spacing:-1.8px;margin:6px 0 2px;font-variant-numeric:tabular-nums}.sub{font-size:13px;color:var(--muted)}.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:17px}.stat{background:#0d1628;border:1px solid #22314b;border-radius:15px;padding:12px}.stat b{display:block;font-size:21px;margin-top:5px}.stat small{color:var(--muted);font-size:12px}
+.sectionhead{display:flex;align-items:center;justify-content:space-between;margin:22px 3px 10px}.sectionhead h2{font-size:17px;margin:0}.weeknav{display:flex;align-items:center;gap:12px}.navbtn{width:34px;height:34px;border:1px solid var(--line);border-radius:11px;background:#111a2c;color:white;font-size:20px}
+.day{display:flex;align-items:center;justify-content:space-between;padding:13px 2px;border-bottom:1px solid #24324a;gap:10px}.day:last-child{border-bottom:0}.dayname{font-weight:650}.daydate{font-size:12px;color:var(--muted);margin-top:3px}.dayhours{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}.daytimes{font-size:11px;color:var(--muted);font-weight:400;margin-top:3px}.empty{color:#70819e;font-size:13px;font-weight:500}
+label{display:block;color:#bdc9dc;font-size:13px;margin:13px 0 7px}input{width:100%;background:#0b1425;border:1px solid #2b3b58;border-radius:13px;color:white;padding:13px;font:inherit;font-size:16px;outline:none}input:focus{border-color:var(--blue)}.fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}.btn{width:100%;border:0;border-radius:14px;background:linear-gradient(135deg,#5b9cff,#3478ed);color:white;font-size:15px;font-weight:750;padding:14px;margin-top:16px}.btn:active{transform:scale(.99)}.secondary{background:#18263d;border:1px solid #304361;color:#dce8ff}.delete{border:0;background:transparent;color:#ff8d98;font-size:12px;padding:8px}.hint{font-size:12px;color:var(--muted);line-height:1.5;margin:10px 2px 0}.historyrow{display:flex;justify-content:space-between;align-items:center;padding:13px 0;border-bottom:1px solid #24324a}.historyrow:last-child{border:0}.historyrow strong{display:block}.historyrow small{color:var(--muted)}.hidden{display:none!important}.footer{text-align:center;color:#657590;font-size:11px;margin:22px 0 5px}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div><div class="brand">Robote<span>jsn</span></div><div class="weeklabel">Tvoja evidencia pracovného času</div></div>
+    <div class="pill">DARK MODE</div>
+  </header>
+
+  <section class="card">
+    <div class="eyebrow" id="weekTitle">Tento týždeň</div>
+    <div class="total" id="weekTotal">0 h 00 min</div>
+    <div class="sub">Spolu od pondelka do nedele</div>
+    <div class="stats">
+      <div class="stat"><small>Odpracované dni</small><b id="daysCount">0</b></div>
+      <div class="stat"><small>Priemer za deň</small><b id="average">0 h</b></div>
+    </div>
+  </section>
+
+  <div class="sectionhead">
+    <h2>Týždenný prehľad</h2>
+    <div class="weeknav"><button class="navbtn" id="prevWeek" aria-label="Predchádzajúci týždeň">‹</button><button class="navbtn" id="nextWeek" aria-label="Nasledujúci týždeň">›</button></div>
+  </div>
+  <section class="card" id="days"></section>
+
+  <div class="sectionhead"><h2 id="formHeading">Pridať pracovný čas</h2></div>
+  <section class="card">
+    <label for="workDate">Dátum</label>
+    <input type="date" id="workDate">
+    <div class="fields">
+      <div><label for="startTime">Začiatok</label><input type="time" id="startTime" value="08:00"></div>
+      <div><label for="endTime">Koniec</label><input type="time" id="endTime" value="16:00"></div>
+    </div>
+    <button class="btn" id="saveBtn">Uložiť pracovný čas</button>
+    <button class="btn secondary hidden" id="cancelEdit">Zrušiť úpravu</button>
+    <p class="hint">Čas sa počíta automaticky bez odpočítania prestávky. Ak skončíš po polnoci, aplikácia to započíta ako nočnú zmenu.</p>
+  </section>
+
+  <div class="sectionhead"><h2>História týždňov</h2></div>
+  <section class="card" id="history"><div class="empty">Zatiaľ tu nie sú uložené žiadne týždne.</div></section>
+  <div class="footer">Údaje sa ukladajú v tomto prehliadači na tomto zariadení.</div>
+</div>
+<script>
+(()=>{
+ const $=id=>document.getElementById(id);
+ const STORE='robotejsn-work-hours-v1';
+ let entries={}; let selectedWeek=weekStart(new Date()); let editingDate=null;
+ try{entries=JSON.parse(localStorage.getItem(STORE)||'{}')||{}}catch(e){entries={}}
+ const pad=n=>String(n).padStart(2,'0');
+ const iso=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+ const parse=s=>{const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
+ function weekStart(d){const x=new Date(d.getFullYear(),d.getMonth(),d.getDate());x.setDate(x.getDate()-(x.getDay()+6)%7);return x}
+ function addDays(d,n){const x=new Date(d);x.setDate(x.getDate()+n);return x}
+ function weekKey(d){return iso(d)}
+ function duration(e){let a=e.start.split(':').map(Number),b=e.end.split(':').map(Number);let mins=b[0]*60+b[1]-(a[0]*60+a[1]);if(mins<=0)mins+=1440;return mins}
+ function fmt(mins){let h=Math.floor(mins/60),m=mins%60;return `${h} h ${pad(m)} min`}
+ function shortFmt(mins){let h=Math.floor(mins/60),m=mins%60;return m?`${h} h ${m} min`:`${h} h`}
+ function save(){localStorage.setItem(STORE,JSON.stringify(entries))}
+ function datesForWeek(start){return Array.from({length:7},(_,i)=>addDays(start,i))}
+ function render(){
+   const dates=datesForWeek(selectedWeek),keySet=dates.map(iso);
+   const total=keySet.reduce((s,k)=>s+(entries[k]?duration(entries[k]):0),0);
+   const days=keySet.filter(k=>entries[k]).length;
+   $('weekTitle').textContent=selectedWeek.getTime()===weekStart(new Date()).getTime()?'Tento týždeň':`${pad(selectedWeek.getDate())}.${pad(selectedWeek.getMonth()+1)}. – ${pad(dates[6].getDate())}.${pad(dates[6].getMonth()+1)}.${dates[6].getFullYear()}`;
+   $('weekTotal').textContent=fmt(total);$('daysCount').textContent=days;$('average').textContent=days?shortFmt(Math.round(total/days)):'0 h';
+   $('days').innerHTML=dates.map(d=>{const k=iso(d),e=entries[k],names=['Nedeľa','Pondelok','Utorok','Streda','Štvrtok','Piatok','Sobota'];return `<div class="day"><div><div class="dayname">${names[d.getDay()]}</div><div class="daydate">${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}</div></div><div style="display:flex;align-items:center;gap:5px">${e?`<div class="dayhours">${fmt(duration(e))}<div class="daytimes">${e.start} – ${e.end}</div></div><button class="delete" data-edit="${k}">Upraviť</button>`:`<div class="dayhours empty">Bez záznamu</div>`}</div></div>`}).join('');
+   $('days').querySelectorAll('[data-edit]').forEach(b=>b.addEventListener('click',()=>edit(b.dataset.edit)));
+   const weeks={};Object.keys(entries).sort().forEach(k=>{const w=weekKey(weekStart(parse(k)));weeks[w]=(weeks[w]||0)+duration(entries[k])});
+   const hist=Object.entries(weeks).sort((a,b)=>b[0].localeCompare(a[0]));
+   $('history').innerHTML=hist.length?hist.map(([w,m])=>{const st=parse(w),en=addDays(st,6);return `<div class="historyrow"><div><strong>${pad(st.getDate())}.${pad(st.getMonth()+1)}. – ${pad(en.getDate())}.${pad(en.getMonth()+1)}.${en.getFullYear()}</strong><small>${weekStart(new Date()).getTime()===st.getTime()?'Tento týždeň':'Uložený týždeň'}</small></div><div style="text-align:right"><strong>${fmt(m)}</strong><button class="delete" data-week="${w}">Zobraziť</button></div></div>`}).join(''):'<div class="empty">Zatiaľ tu nie sú žiadne uložené týždne.</div>';
+   $('history').querySelectorAll('[data-week]').forEach(b=>b.addEventListener('click',()=>{selectedWeek=parse(b.dataset.week);resetForm();render();window.scrollTo({top:0,behavior:'smooth'})}));
+ }
+ function edit(k){const e=entries[k];if(!e)return;editingDate=k;$('workDate').value=k;$('startTime').value=e.start;$('endTime').value=e.end;$('formHeading').textContent='Upraviť pracovný čas';$('saveBtn').textContent='Uložiť zmeny';$('cancelEdit').classList.remove('hidden');document.querySelector('.card input').scrollIntoView({behavior:'smooth',block:'center'})}
+ function resetForm(){editingDate=null;$('workDate').value=iso(new Date());$('startTime').value='08:00';$('endTime').value='16:00';$('formHeading').textContent='Pridať pracovný čas';$('saveBtn').textContent='Uložiť pracovný čas';$('cancelEdit').classList.add('hidden')}
+ $('saveBtn').addEventListener('click',()=>{const date=$('workDate').value,start=$('startTime').value,end=$('endTime').value;if(!date||!start||!end){alert('Vyplň dátum, začiatok aj koniec práce.');return}if(start===end){alert('Začiatok a koniec nemôžu byť rovnaké.');return}if(editingDate&&editingDate!==date)delete entries[editingDate];entries[date]={start,end};save();selectedWeek=weekStart(parse(date));resetForm();render()});
+ $('cancelEdit').addEventListener('click',resetForm);
+ $('prevWeek').addEventListener('click',()=>{selectedWeek=addDays(selectedWeek,-7);resetForm();render()});
+ $('nextWeek').addEventListener('click',()=>{selectedWeek=addDays(selectedWeek,7);resetForm();render()});
+ $('workDate').value=iso(new Date());render();
+})();
+</script>
+</body>
+</html>
